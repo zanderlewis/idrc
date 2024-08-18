@@ -5,6 +5,7 @@ I Don't Really Care: Auto APIs for lazy people
 - [IRDC](#idrc)
   - [Installation](#installation)
   - [Usage](#usage)
+  - [IDRC vs Flask](#idrc-vs-flask)
 
 ## Installation
 
@@ -80,3 +81,17 @@ if __name__ == '__main__':
 ```
 
 IDRC condensed 27 lines of code into 25 lines of code, with much less typing overall.
+
+## IDRC vs Flask
+
+### Advantages of IDRC
+
+- Rapid API development
+- Very Simple
+- Built-in error handling
+
+### Advantages of Flask
+
+- Mature framework
+- Large community
+- Flexible and extensible
