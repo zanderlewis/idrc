@@ -1,8 +1,8 @@
-# EAFAPI
-Easy Auto Function API (EAFAPI - ee-faa-pee)
+# IDRC
+Auto APIs for lazy people
 
 ## Table of Contents
-- [EAFAPI](#eafapi)
+- [IRDC](#idrc)
   - [Background](#background)
 
 ## Background
