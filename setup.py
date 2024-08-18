@@ -3,9 +3,11 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+__version__ = open("version", "r").read().strip()
+
 setuptools.setup(
     name="idrc",
-    version="0.0.1",
+    version=__version__,
     author="Zander Lewis",
     author_email="zander@zanderlewis.dev",
     description="Auto APIs for lazy people.",
