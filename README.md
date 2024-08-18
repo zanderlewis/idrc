@@ -89,9 +89,11 @@ IDRC condensed 27 lines of code into 25 lines of code, with much less typing ove
 - Rapid API development
 - Very Simple
 - Built-in error handling
+- Lightweight wrapper of Flask
 
 ### Advantages of Flask
 
 - Mature framework
 - Large community
 - Flexible and extensible
+- Extensive documentation
