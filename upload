@@ -14,7 +14,7 @@ def upload(version_increment):
     # Remove build files
     if os.path.exists("build"):
         subprocess.run(["rm", "-rf", "build"], check=True)
-    if os.path.exists("astric.egg-info"):
+    if os.path.exists("idrc.egg-info"):
         subprocess.run(["rm", "-rf", "idrc.egg-info"], check=True)
     if os.path.exists("dist"):
         subprocess.run(["rm", "-rf", "dist"], check=True)
