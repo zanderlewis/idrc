@@ -78,3 +78,5 @@ def get_weather():
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
 ```
+
+IDRC condensed 27 lines of code into 25 lines of code, with much less typing overall.
