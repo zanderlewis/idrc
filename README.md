@@ -44,3 +44,5 @@ api.define(get_weather, methods=['GET'])
 if __name__ == '__main__':
     api.run(host='0.0.0.0', port=5000)
 ```
+
+The `define` function in the `idrc` library generated the api.
