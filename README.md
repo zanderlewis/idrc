@@ -21,7 +21,7 @@ IDRC can integrate with any function. For example:
 from idrc import idrc
 
 # Initialize the idrc class
-api = idrc(debug=True)
+api = idrc(verbose=True)
 
 # Simulate a weather database
 weather_data = {
