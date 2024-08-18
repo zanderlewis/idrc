@@ -3,9 +3,9 @@ import inspect
 import functools
 
 class idrc:
-    def __init__(self, debug=False):
+    def __init__(self, verbose=False):
         self.app = Flask(__name__)
-        self.debug = debug
+        self.verbose = verbose
 
     def define(self, func, v=1, endpoint=None, methods=['POST']):
         """
@@ -20,12 +20,16 @@ class idrc:
         """
         if endpoint is None:
             endpoint = func.__name__
+            if self.verbose:
+                print(f'No endpoint specified. Defaulting to function name: {endpoint}')
         
         # Wrap the function to handle requests
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             if request.method == 'GET':
                 # Extract query parameters and convert types based on annotations
+                if self.verbose:
+                    print('Converting types...')
                 args = self._convert_types(func, request.args)
 
                 # Handle missing required parameters
@@ -50,6 +54,8 @@ class idrc:
             return jsonify(result)
 
         # Register the endpoint
+        if self.verbose:
+            print('Registering function...')
         self.app.add_url_rule(f'/api/v{v}/{endpoint}', endpoint, wrapper, methods=methods)
     
     def _convert_types(self, func, data):
@@ -82,4 +88,4 @@ class idrc:
         return converted
     
     def run(self, *args, **kwargs):
-        self.app.run(*args, **kwargs, debug=self.debug)
+        self.app.run(*args, **kwargs)
