@@ -1,5 +1,5 @@
 # IDRC
-Auto APIs for lazy people
+I Don't Really Care: Auto APIs for lazy people
 
 ## Table of Contents
 - [IRDC](#idrc)

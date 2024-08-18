@@ -1,0 +1,62 @@
+#!/usr/bin/env python3
+
+import subprocess
+import argparse
+import time
+import os
+
+
+def upload(version_increment):
+    # Cleanup python files
+    if os.path.exists("cleanup.py"):
+        subprocess.run(["python3", "cleanup.py"], check=True)
+
+    # Remove build files
+    if os.path.exists("build"):
+        subprocess.run(["rm", "-rf", "build"], check=True)
+    if os.path.exists("astric.egg-info"):
+        subprocess.run(["rm", "-rf", "idrc.egg-info"], check=True)
+    if os.path.exists("dist"):
+        subprocess.run(["rm", "-rf", "dist"], check=True)
+
+    # Increment the version
+    if not os.path.exists("version"):
+        open("version", "w").close()
+        new_version = "1.0.0"
+    else:
+        with open("version", "r") as file:
+            version = file.read().strip()
+        
+        major, minor, patch = map(int, version.split('.'))
+        if version_increment == "major":
+            major += 1
+            minor = 0
+            patch = 0
+        elif version_increment == "minor":
+            minor += 1
+            patch = 0
+        elif version_increment == "patch":
+            patch += 1
+        new_version = f"{major}.{minor}.{patch}"
+    
+    with open("version", "w") as file:
+        file.write(new_version)
+
+    # Sleep for a while to let the changes propagate
+    time.sleep(5)
+
+    # Build the package
+    subprocess.run(["python3", "setup.py", "sdist", "bdist_wheel"], check=True)
+
+    # Upload the package
+    subprocess.run(["twine", "upload", "dist/*"], check=True)
+
+if __name__ == "__main__":
+    argparse = argparse.ArgumentParser()
+    argparse.add_argument("version_increment", type=str, help="The version increment to use")
+    args = argparse.parse_args()
+
+    if not args.version_increment or args.version_increment not in ["major", "minor", "patch"]:
+        raise ValueError("Invalid version increment")
+    
+    upload(args.version_increment)
