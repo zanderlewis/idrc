@@ -4,7 +4,7 @@ I Don't Really Care (IDRC): Auto APIs for lazy people
 [![GitHub License](https://img.shields.io/github/license/zanderlewis/idrc)](LICENSE)
 [![PyPI - Version](https://img.shields.io/pypi/v/idrc?logo=python&logoColor=%23FFD43B&link=https%3A%2F%2Fpypi.org%2Fproject%2Fidrc)](https://pypi.org/project/idrc)
 
-![PyPI - Downloads](https://img.shields.io/pypi/dd/idrc)
+![PyPI - Downloads](https://img.shields.io/pypi/dd/idrc?logo=python&logoColor=%23FFD43B)
 
 ## Table of Contents
 - [IRDC](#idrc)
