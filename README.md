@@ -90,6 +90,7 @@ IDRC condensed 27 lines of code into 25 lines of code, with much less typing ove
 - Very Simple
 - Built-in error handling
 - Lightweight wrapper of Flask
+- Pretty terminal output
 
 ### Advantages of Flask
 
@@ -97,3 +98,4 @@ IDRC condensed 27 lines of code into 25 lines of code, with much less typing ove
 - Large community
 - Flexible and extensible
 - Extensive documentation
+- Stack traces
