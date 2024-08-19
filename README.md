@@ -1,7 +1,7 @@
 # IDRC
 I Don't Really Care (IDRC): Auto APIs for lazy people
 
-![PyPI - Version](https://img.shields.io/pypi/v/idrc?logo=python&logoColor=%23FFD43B&link=https%3A%2F%2Fpypi.org%2Fproject%2Fidrc)
+[![PyPI - Version](https://img.shields.io/pypi/v/idrc?logo=python&logoColor=%23FFD43B&link=https%3A%2F%2Fpypi.org%2Fproject%2Fidrc)](https://pypi.org/project/idrc)
 
 ## Table of Contents
 - [IRDC](#idrc)
