@@ -1,36 +1,15 @@
 from flask import Flask, request, jsonify, abort
 import inspect
 import functools
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+import logging
+import warnings
+from .api_key import APIKeyGenerator
+from .colors import printc
 
-def printc(text, color='blue'):
-    """
-    Print a colored text to the console.
-    Parameters:
-        text (str): The text to be printed.
-        color (str, optional): The color of the text. Defaults to 'blue'.
-    """
-    c = Color()
-    color_code = getattr(c, color.upper(), c.BLUE)
-    print(f'{color_code}{text}{c.RESET}')
-
-class Color:
-    def __init__(self):
-        self.RED = '\033[91m'
-        self.GREEN = '\033[92m'
-        self.YELLOW = '\033[93m'
-        self.BLUE = '\033[94m'
-        self.MAGENTA = '\033[95m'
-        self.CYAN = '\033[96m'
-        self.WHITE = '\033[97m'
-        self.BLACK = '\033[30m'
-        self.PURPLE = '\033[35m'
-        self.ORANGE = '\033[33m'
-        self.REBECCAPURPLE = '\033[45m'
-        self.INDIGO = '\033[44m'
-        self.TURQUOISE = '\033[36m'
-        self.PINK = '\033[95m'
-        self.HOTPINK = '\033[95m'
-        self.RESET = '\033[0m'
+logging.getLogger('werkzeug').setLevel(logging.ERROR)
+warnings.filterwarnings('ignore')
 
 class Verbose:
     def __init__(self, verbose=False):
@@ -47,6 +26,8 @@ class idrc:
         self.verbose = Verbose(self.is_verbose).debug
         self.landing_html = ''
         self.landing_registered = False  # Flag to check if landing is registered
+        self.api_keys = []
+        self.limit = None
 
     def define(self, func, v=1, endpoint=None, methods=['POST']):
         """
@@ -134,6 +115,89 @@ class idrc:
         
         return converted
     
+    def keygen(self, multiplier=1):
+        """
+        Generate a custom API key using the given multiplier.
+        Parameters:
+            multiplier (int, optional): The multiplier to use for generating the key. Defaults to 1.
+        Returns:
+            key (str): The generated API key.
+        """
+        keygen = APIKeyGenerator()
+        key = keygen.generate(multiplier)
+        key = f'{__name__}-{key}'
+        self.api_keys.append(key)
+        return key
+    
+    def protect(self, key):
+        """
+        Protect an API endpoint using the given key.
+        Parameters:
+            key (str): The API key to protect the endpoint.
+        Returns:
+            None
+        """
+        def decorator(func):
+            @functools.wraps(func)
+            def wrapper(*args, **kwargs):
+                if (request.headers.get('X-API-Key') or request.args.get('key')) == key:
+                    return func(*args, **kwargs)
+                else:
+                    abort(401, description='Unauthorized')
+            return wrapper
+        return decorator
+    
+    def list_keys(self):
+        """
+        List all the generated API keys.
+        Parameters:
+            None
+        Returns:
+            keys (list): The list of generated API keys.
+        """
+        return self.api_keys
+    
+    def remove_key(self, key):
+        """
+        Remove the given API key from the list of generated keys.
+        Parameters:
+            key (str): The API key to be removed.
+        Returns:
+            None
+        """
+        if key in self.api_keys:
+            self.api_keys.remove(key)
+            return True
+        return False
+    
+    def clear_keys(self):
+        """
+        Clear all the generated API keys.
+        Parameters:
+            None
+        Returns:
+            None
+        """
+        self.api_keys = []
+
+    def rate_limit(self, limit=5):
+        """
+        Rate limit the API endpoints to the given number of requests per minute.
+        Parameters:
+            limit (int, optional): The number of requests allowed per minute. Defaults to 5.
+        Returns:
+            None
+        """
+        self.limit = limit
+        self.verbose(f'Rate limit set to {limit} requests per minute')
+
+        # Initialize the Limiter with the Flask app and key function
+        self.limiter = Limiter(
+            get_remote_address,
+            app=self.app,
+            default_limits=[f"{limit} per minute"]
+        )
+    
     def landing(self, html=None):
         """
         Set the landing page for the Flask app.
@@ -213,29 +277,11 @@ class idrc:
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
         if not error[0]:  # Check error state
-            m = f'Flask app running on http://{host}:{port}'
+            m = f'[SUCCESS] Flask app running on http://{host}:{port}'
             printc(m, 'green')
-            printc('Press Ctrl+C to stop the server', 'green')
+            printc('[SUCCESS] Press Ctrl+C to stop the server', 'green')
             printc('='*(len(m)+10), 'yellow')
 
         # Wait for the Flask app thread to finish
         app_thread.join()
 
-# Example usage
-if __name__ == '__main__':
-    api = idrc(verbose=True)
-
-    def add(a: int, b: int):
-        return a + b
-
-    def subtract(a: int, b: int):
-        return a - b
-    
-    def error():
-        return api.ecode(404, 'Not found')
-    
-    api.define(add)
-    api.define(subtract)
-    api.define(error, endpoint='error', methods=['GET'])
-
-    api.run()
