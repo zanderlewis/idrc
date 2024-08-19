@@ -41,7 +41,7 @@ def get_weather(city: str) -> dict:
     if forecast:
         return forecast
     else:
-        return {"error": "City not found"}
+        return api.ecode('City not found', 404)
 
 # Register the function as an API endpoint
 api.define(get_weather, methods=['GET'])
@@ -78,7 +78,7 @@ def get_weather():
     if forecast:
         return jsonify(forecast)
     else:
-        return jsonify({"error": "City not found"}), 404
+        return jsonify({"error": "City not found"}),404
 
 # Run the Flask app
 if __name__ == '__main__':
