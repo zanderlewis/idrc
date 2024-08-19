@@ -156,6 +156,20 @@ class idrc:
             
             self.app.add_url_rule('/', 'landing', landing_page)
             self.landing_registered = True
+        
+    def ecode(self, code, message=''):
+        """
+        Return a JSON response with the given status code and message.
+        Parameters:
+            code (int): The HTTP status code.
+            message (str, optional): The message to include in the response. Defaults to ''.
+        Returns:
+            response (flask.Response): The JSON response object.
+        """
+        self.verbose(f'Returning status code {code} with message: {message}')
+        self.app.make_response(({"message": message}, code))
+
+        abort(code, message)
 
     def run(self, *args, **kwargs):
         import threading
@@ -199,7 +213,10 @@ class idrc:
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
         if not error[0]:  # Check error state
-            printc(f'[SUCCESS] Flask app running on http://{host}:{port}', 'green')
+            m = f'Flask app running on http://{host}:{port}'
+            printc(m, 'green')
+            printc('Press Ctrl+C to stop the server', 'green')
+            printc('='*(len(m)+10), 'yellow')
 
         # Wait for the Flask app thread to finish
         app_thread.join()
@@ -214,7 +231,11 @@ if __name__ == '__main__':
     def subtract(a: int, b: int):
         return a - b
     
+    def error():
+        return api.ecode(404, 'Not found')
+    
     api.define(add)
     api.define(subtract)
+    api.define(error, endpoint='error', methods=['GET'])
 
     api.run()
