@@ -41,7 +41,7 @@ def get_weather(city: str) -> dict:
     if forecast:
         return forecast
     else:
-        return api.ecode('City not found', 404)
+        return api.ecode(404, 'City not found')
 
 # Register the function as an API endpoint
 api.define(get_weather, methods=['GET'])
