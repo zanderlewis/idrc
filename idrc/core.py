@@ -266,7 +266,7 @@ class idrc:
         def start_app():
             try:
                 self.landing()
-                self.app.run(host=host, port=port, *args, **kwargs)
+                self.app.run(*args, **kwargs)
             except Exception as e:
                 error[0] = True  # Set error state to True
                 sys.stdout = sys.__stdout__
