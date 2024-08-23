@@ -237,9 +237,19 @@ class idrc:
 
     def run(self, *args, **kwargs):
         import threading
-        host = kwargs.get('host', 'localhost')
-        port = kwargs.get('port', 5001)
-        debug = kwargs.get('debug', False)
+        if not kwargs.get('host'):
+            host = 'localhost'
+        else:
+            host = kwargs.get('host')
+        if not kwargs.get('port'):
+            port = 5000
+        else:
+            port = kwargs.get('port')
+        if not kwargs.get('debug'):
+            debug = False
+        else:
+            debug = kwargs.get('debug')
+        
         error = [False]  # Use a list to track error state
 
         if debug:
