@@ -1,29 +1,12 @@
 import logging, warnings, os, sys
 from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
 from http.server import HTTPServer
 from .request_handler import RequestHandler
 from .colors import printc
+from .helpers import RestartHandler, Verbose
 
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
 warnings.filterwarnings('ignore')
-
-class RestartHandler(FileSystemEventHandler):
-    def __init__(self, restart_callback):
-        self.restart_callback = restart_callback
-
-    def on_any_event(self, event):
-        # Clear terminal
-        os.system('cls' if os.name == 'nt' else 'clear')
-        self.restart_callback()
-
-class Verbose:
-    def __init__(self, verbose=False):
-        self.verbose = verbose
-    
-    def debug(self, msg, color='blue'):
-        if self.verbose:
-            printc(f'[DEBUG] {msg}', color)
 
 class idrc:
     def __init__(self, verbose=False):
@@ -67,15 +50,11 @@ class idrc:
         def restart():
             printc('[INFO] Detected file change. Restarting...', 'yellow')
             os.execv(sys.executable, ['python'] + sys.argv)
-        
-        host = kwargs.get('host', 'localhost')
-        port = kwargs.get('port', 5000)
 
         event_handler = RestartHandler(restart)
         observer = Observer()
         observer.schedule(event_handler, path='.', recursive=True)
         observer.start()
-        printc(f'[SUCCESS] API is running on http://{host}:{port}', 'green')
  
         try:
             self._run_without_reloader(*args, **kwargs)
@@ -98,6 +77,10 @@ class idrc:
             try:
                 self.landing()
                 server = HTTPServer((host, port), lambda *args, **kwargs: RequestHandler(*args, routes=self.routes, verbose=self.verbose, **kwargs))
+                m = f'[SUCCESS] HTTP server running on http://{host}:{port}'
+                printc(m, 'green')
+                printc('[SUCCESS] Press Ctrl+C to stop the server', 'green')
+                printc('='*(len(m)+10), 'yellow')
                 server.serve_forever()
             except Exception as e:
                 error[0] = True
@@ -112,11 +95,6 @@ class idrc:
 
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
-        if not error[0]:
-            m = f'[SUCCESS] HTTP server running on http://{host}:{port}'
-            printc(m, 'green')
-            printc('[SUCCESS] Press Ctrl+C to stop the server', 'green')
-            printc('='*(len(m)+10), 'yellow')
 
     def port_available(self, host, port):
         import socket

@@ -1,5 +1,4 @@
 import json, inspect
-from urllib.parse import urlparse, parse_qs
 from http.server import BaseHTTPRequestHandler
 
 class RequestHandler(BaseHTTPRequestHandler):
@@ -22,6 +21,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.handle_request('DELETE')
 
     def handle_request(self, method):
+        from urllib.parse import urlparse, parse_qs
         parsed_path = urlparse(self.path)
         path = parsed_path.path
         query_params = parse_qs(parsed_path.query)
